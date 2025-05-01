@@ -1,8 +1,6 @@
-﻿using Humanizer;
-using Spectre.Console;
+﻿using Spectre.Console;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf.Graphics;
-using Syncfusion.Pdf.Interactive;
 using Syncfusion.Pdf.Parsing;
 
 namespace SyncfusionPdfLongText.Helpers;
@@ -19,37 +17,37 @@ public static class PdfHelper
         ArgumentException.ThrowIfNullOrWhiteSpace(renderedPdfPath);
 
         AnsiConsole.WriteLine($"Loading PDF template file '{pdfTemplateFilePath}' into memory...");
-        using var pdfTemplateStream = File.OpenRead(pdfTemplateFilePath);
-        using var pdfDocument = new PdfLoadedDocument(pdfTemplateStream);
+        using var pdfTemplateStream = GetTemplateAsMemoryStream(pdfTemplateFilePath);
+        using var pdfDocument = new PdfLoadedDocument(file: pdfTemplateStream);
         AnsiConsole.WriteLine("Done.");
         AnsiConsole.WriteLine("");
 
         AnsiConsole.WriteLine("Getting Caliber form fields...");
-        var caliberTextBoxFields = GetCaliberTextBoxFields(pdfDocument);
-        AnsiConsole.WriteLine($"Found {"caliber field".ToQuantity(caliberTextBoxFields.Count, "N0")}.");
+        GetCaliberTextBoxFields(pdfDocument);
+        //AnsiConsole.WriteLine($"Found {"caliber field".ToQuantity(caliberTextBoxFields.Count, "N0")}.");
         AnsiConsole.WriteLine("Done.");
         AnsiConsole.WriteLine("");
 
-        AnsiConsole.WriteLine("Displaying text size information for all Caliber form fields...");
-        foreach (var caliberTextBoxField in caliberTextBoxFields)
-        {
-            AnsiConsole.MarkupLine("[blue]*** ============================================================================[/]");
-            AnsiConsole.MarkupLineInterpolated($"[blue]*** {caliberTextBoxField.Name}:[/]");
-            AnsiConsole.MarkupLine("[blue]*** ============================================================================[/]");
-            AnsiConsole.WriteLine("");
+        //AnsiConsole.WriteLine("Displaying text size information for all Caliber form fields...");
+        //foreach (var caliberTextBoxField in caliberTextBoxFields)
+        //{
+        //    AnsiConsole.MarkupLine("[blue]*** ============================================================================[/]");
+        //    AnsiConsole.MarkupLineInterpolated($"[blue]*** {caliberTextBoxField.Name}:[/]");
+        //    AnsiConsole.MarkupLine("[blue]*** ============================================================================[/]");
+        //    AnsiConsole.WriteLine("");
 
-            CheckStringSize(LongText1, caliberTextBoxField);
-            AnsiConsole.WriteLine("");
+        //    CheckStringSize(LongText1, caliberTextBoxField);
+        //    AnsiConsole.WriteLine("");
 
-            CheckStringSize(LongText2, caliberTextBoxField);
-            AnsiConsole.WriteLine("");
+        //    CheckStringSize(LongText2, caliberTextBoxField);
+        //    AnsiConsole.WriteLine("");
 
 
-            AnsiConsole.WriteLine("Done.");
-            AnsiConsole.WriteLine("");
-        }
-        AnsiConsole.WriteLine("Done.");
-        AnsiConsole.WriteLine("");
+        //    AnsiConsole.WriteLine("Done.");
+        //    AnsiConsole.WriteLine("");
+        //}
+        //AnsiConsole.WriteLine("Done.");
+        //AnsiConsole.WriteLine("");
     }
 
 
@@ -57,53 +55,81 @@ public static class PdfHelper
     // Private methods
     //
 
+    private static MemoryStream GetTemplateAsMemoryStream(string pdfTemplateFilePath)
+    {
+        var pdfTemplateMemoryStream = new MemoryStream();
+
+        using (var pdfTemplateFileStream = File.OpenRead(pdfTemplateFilePath))
+        {
+            pdfTemplateFileStream.CopyTo(pdfTemplateMemoryStream);
+
+            pdfTemplateMemoryStream.Position = 0L;
+        }
+
+        return pdfTemplateMemoryStream;
+    }
+
     private static List<PdfLoadedTextBoxField> GetCaliberTextBoxFields(PdfLoadedDocument pdfDocument)
     {
         List<PdfLoadedTextBoxField> caliberFields = [];
-        var enumerator = pdfDocument.Form.Fields.GetEnumerator();
 
-        while (enumerator.MoveNext())
+        if (pdfDocument.Form.Fields.TryGetField($"topmostSubform[0].Page1[0].Q5_CaliberGauge_1", out PdfLoadedField pdfField1))
         {
-            var pdfField = (PdfField)enumerator.Current;
-            if (!pdfField.Name.StartsWith("topmostSubform[0].Page1[0].Q5_CaliberGauge_", StringComparison.Ordinal))
-            {
-                continue;
-            }
+            var caliberField = (PdfLoadedTextBoxField)pdfField1;
 
-            caliberFields.Add((PdfLoadedTextBoxField)pdfField);
+            CheckStringSize(LongText1, caliberField);
+            AnsiConsole.WriteLine("");
+
+            //caliberFields.Add((PdfLoadedTextBoxField)pdfField1);
+        }
+
+        if (pdfDocument.Form.Fields.TryGetField($"topmostSubform[0].Page1[0].Q5_CaliberGauge_2", out PdfLoadedField pdfField2))
+        {
+            var caliberField = (PdfLoadedTextBoxField)pdfField2;
+
+            CheckStringSize(LongText2, caliberField);
+            AnsiConsole.WriteLine("");
+
+            //caliberFields.Add((PdfLoadedTextBoxField)pdfField2);
         }
 
         return caliberFields;
     }
 
-    static void CheckStringSize(string text, PdfLoadedTextBoxField textField)
+    static void CheckStringSize(string text, PdfLoadedTextBoxField textBoxField)
     {
-        AnsiConsole.MarkupLineInterpolated($"Checking string [green]'{text}'[/] to see if it will fit within {nameof(PdfLoadedTextBoxField)} [yellow]'{textField.Name}'[/]...");
+        AnsiConsole.MarkupLineInterpolated($"Checking string [green]'{text}'[/] to see if it will fit within {nameof(PdfLoadedTextBoxField)} [yellow]'{textBoxField.Name}'[/]...");
 
         Console.WriteLine();
         Console.WriteLine($"TextBox Bounds:");
-        Console.WriteLine($"  Width: {textField.Bounds.Width}");
-        Console.WriteLine($"  Height: {textField.Bounds.Height}");
+        Console.WriteLine($"  Width: {textBoxField.Bounds.Width}");
+        Console.WriteLine($"  Height: {textBoxField.Bounds.Height}");
 
 
-        //
-        // Mesure the string
-        //
+        // Calling MeasureString alters the state of the PdfLoadedTextBoxField, causing PdfStringLayouter to return
+        //   0 for Actual Width and Height.
+        ////
+        //// Mesure the string
+        ////
 
-        var stringSize = textField.Font.MeasureString(text, new PdfStringFormat(textField.TextAlignment));
+        //var stringSize = textBoxField.Font.MeasureString(text, new PdfStringFormat(textBoxField.TextAlignment));
 
-        Console.WriteLine();
-        Console.WriteLine($"MeaureString:");
-        Console.WriteLine($"  Width: {stringSize.Width}");
-        Console.WriteLine($"  Height: {stringSize.Height}");
+        //Console.WriteLine();
+        //Console.WriteLine($"MeaureString:");
+        //Console.WriteLine($"  Width: {stringSize.Width}");
+        //Console.WriteLine($"  Height: {stringSize.Height}");
 
 
         //
         // The "layouter" determines whether the text will be clipped in the given textbox.
         //
 
+        // We can't just measure the raw text. We have to fill the textbox first, and then measure the text
+        //   in the context of the textbox.
+        textBoxField.Text = text;
+
         var layouter = new PdfStringLayouter();
-        var layoutResult = layouter.Layout(text, textField.Font, new PdfStringFormat(textField.TextAlignment), new SizeF(textField.Bounds.Width, textField.Bounds.Height));
+        var layoutResult = layouter.Layout(text, textBoxField.Font, new PdfStringFormat(textBoxField.TextAlignment), new SizeF(textBoxField.Bounds.Width, textBoxField.Bounds.Height));
 
         Console.WriteLine();
         Console.WriteLine($"Layout result:");

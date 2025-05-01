@@ -9,19 +9,37 @@ public static class PdfLayouterHelper
 {
     public static void ShowIfTextWillFitInTextBoxes(string pdfTemplateFilePath, string renderedPdfPath)
     {
+        //
+        // Validate the arguments.
+        //
+
         ArgumentException.ThrowIfNullOrWhiteSpace(pdfTemplateFilePath);
         FileHelper.ThrowIfNotExists(pdfTemplateFilePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(renderedPdfPath);
 
 
+        //
+        // Display a header in the console.
+        //
+
         DisplayHelper.Header("Show TextBox Layouter Results");
         AnsiConsole.WriteLine();
+
+
+        //
+        // Load the template file into a PdfLoadedDocument instance.
+        //
 
         AnsiConsole.WriteLine($"Loading PDF template file '{pdfTemplateFilePath}' into memory...");
         using var pdfTemplateStream = TemplateHelper.GetTemplateAsMemoryStream(pdfTemplateFilePath);
         using var pdfDocument = new PdfLoadedDocument(file: pdfTemplateStream);
         AnsiConsole.WriteLine("Done.");
         AnsiConsole.WriteLine();
+
+
+        //
+        // Describe the text box bounds of the two Caliber text boxes on the PDF form.
+        //
 
         DescribeCaliberTextBoxFields(pdfDocument);
         AnsiConsole.WriteLine();

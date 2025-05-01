@@ -11,23 +11,35 @@ public static class PdfFillHelper
 {
     public static void FillPdfAndOpen(string pdfTemplateFilePath, string renderedPdfPath)
     {
+        //
+        // Validate the arguments.
+        //
+
         ArgumentException.ThrowIfNullOrWhiteSpace(pdfTemplateFilePath);
         FileHelper.ThrowIfNotExists(pdfTemplateFilePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(renderedPdfPath);
 
 
-        DisplayHelper.Header("Filling the two problematic Caliber fields -AND- opening the filled PDF");
+        //
+        // Display a header in the console.
+        //
+
+        DisplayHelper.Header("Filling the two Caliber fields -AND- opening the filled PDF");
         AnsiConsole.WriteLine();
 
 
-        PdfLoadedDocument? pdfDocument = null;
+        //
+        // Fill the PDF
+        //
 
         using (var pdfTemplateStream = TemplateHelper.GetTemplateAsMemoryStream(pdfTemplateFilePath))
         {
-            pdfDocument = new PdfLoadedDocument(file: pdfTemplateStream);
+            // Create the fillable PdfLoadedDocument instance from the template stream.
+            var pdfDocument = new PdfLoadedDocument(file: pdfTemplateStream);
 
+            // Fill the two Caliber fields.
             AnsiConsole.WriteLine("Filling the two caliber fields with long strings...");
-            FillTop2CaliberFields(pdfDocument, longCaliber1: Constants.LongCaliber1, longCaliber2: Constants.LongCaliber2);
+            FillTwoCaliberFields(pdfDocument, longCaliber1: Constants.LongCaliber1, longCaliber2: Constants.LongCaliber2);
             AnsiConsole.WriteLine("Done.");
             AnsiConsole.WriteLine();
 
@@ -45,6 +57,11 @@ public static class PdfFillHelper
             AnsiConsole.WriteLine();
         }
 
+
+        //
+        // Open the PDF in the OS's default PDF viewer.
+        //
+
         AnsiConsole.WriteLine("Opening the filled PDF in the OS's default PDF viewer...");
         OpenInDefaultViewer(pdfFilePath: renderedPdfPath);
         AnsiConsole.WriteLine("Done.");
@@ -56,7 +73,7 @@ public static class PdfFillHelper
     // Private methods
     //
 
-    private static void FillTop2CaliberFields(PdfLoadedDocument pdfDocument, string longCaliber1, string longCaliber2)
+    private static void FillTwoCaliberFields(PdfLoadedDocument pdfDocument, string longCaliber1, string longCaliber2)
     {
         FillCaliberField(pdfDocument, fieldName: Constants.CaliberField1Name, longCaliber: longCaliber1);
         FillCaliberField(pdfDocument, fieldName: Constants.CaliberField2Name, longCaliber: longCaliber2);
@@ -71,6 +88,7 @@ public static class PdfFillHelper
             // Fill the .Text property first. If the text doesn't fit, tell Syncfusion to auto-resize the text to fit.
             caliberLoadedTextBoxField.Text = longCaliber;
 
+            // If the text will be clipped, set the text box to auto-resize the text so that it fits.
             if (IsTextClipped(longCaliber, caliberLoadedTextBoxField))
             {
                 caliberLoadedTextBoxField.AutoResizeText = true;

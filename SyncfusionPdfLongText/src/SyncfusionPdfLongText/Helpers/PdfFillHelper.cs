@@ -49,8 +49,8 @@ public static class PdfFillHelper
 
     private static void FillTop2CaliberFields(PdfLoadedDocument pdfDocument, string longCaliber1, string longCaliber2)
     {
-        FillCaliberField(pdfDocument, fieldName: "topmostSubform[0].Page1[0].Q5_CaliberGauge_1", longCaliber: longCaliber1);
-        FillCaliberField(pdfDocument, fieldName: "topmostSubform[0].Page1[0].Q5_CaliberGauge_2", longCaliber: longCaliber2);
+        FillCaliberField(pdfDocument, fieldName: Constants.CaliberField1Name, longCaliber: longCaliber1);
+        FillCaliberField(pdfDocument, fieldName: Constants.CaliberField2Name, longCaliber: longCaliber2);
     }
 
     private static void FillCaliberField(PdfLoadedDocument pdfDocument, string fieldName, string longCaliber)

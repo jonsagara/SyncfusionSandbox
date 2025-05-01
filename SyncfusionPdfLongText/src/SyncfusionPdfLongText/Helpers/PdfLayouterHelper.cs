@@ -34,7 +34,7 @@ public static class PdfLayouterHelper
 
     private static void DescribeCaliberTextBoxFields(PdfLoadedDocument pdfDocument)
     {
-        if (pdfDocument.Form.Fields.TryGetField("topmostSubform[0].Page1[0].Q5_CaliberGauge_1", out PdfLoadedField pdfField1))
+        if (pdfDocument.Form.Fields.TryGetField(Constants.CaliberField1Name, out PdfLoadedField pdfField1))
         {
             var caliberField = (PdfLoadedTextBoxField)pdfField1;
 
@@ -42,7 +42,7 @@ public static class PdfLayouterHelper
             AnsiConsole.WriteLine("");
         }
 
-        if (pdfDocument.Form.Fields.TryGetField("topmostSubform[0].Page1[0].Q5_CaliberGauge_2", out PdfLoadedField pdfField2))
+        if (pdfDocument.Form.Fields.TryGetField(Constants.CaliberField2Name, out PdfLoadedField pdfField2))
         {
             var caliberField = (PdfLoadedTextBoxField)pdfField2;
 

@@ -10,11 +10,12 @@ public static class PdfHelper
     private const string LongText1 = "longunbrokencalibertextohmygoshwhyisthissolong";
     private const string LongText2 = "9MM PARABULLUM";
 
-    public static void DemonstrateLongTextIssue(string pdfTemplateFilePath, string renderedPdfPath)
+    public static void ShowIfTextWillFitInTextBoxes(string pdfTemplateFilePath, string renderedPdfPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(pdfTemplateFilePath);
         FileHelper.ThrowIfNotExists(pdfTemplateFilePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(renderedPdfPath);
+
 
         DisplayHeader("Show TextBox Layouter Results");
         AnsiConsole.WriteLine();

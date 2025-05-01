@@ -3,7 +3,7 @@ using SyncfusionPdfLongText.Helpers;
 
 try
 {
-    PdfHelper.DemonstrateLongTextIssue(
+    PdfHelper.ShowIfTextWillFitInTextBoxes(
         pdfTemplateFilePath: @"C:\Users\Jon\Desktop\form4473.202308.en.pdf",
         renderedPdfPath: @"C:\Users\Jon\Desktop\rendered.pdf"
         );

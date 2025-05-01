@@ -17,3 +17,4 @@ App_Data/
 .vs/
 Logs/
 node_modules/
+.idea/

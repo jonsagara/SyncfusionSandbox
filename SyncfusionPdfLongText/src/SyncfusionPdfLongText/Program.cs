@@ -3,9 +3,19 @@ using SyncfusionPdfLongText.Helpers;
 
 try
 {
-    PdfHelper.ShowIfTextWillFitInTextBoxes(
-        pdfTemplateFilePath: @"C:\Users\Jon\Desktop\form4473.202308.en.pdf",
-        renderedPdfPath: @"C:\Users\Jon\Desktop\rendered.pdf"
+    var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+    var templateFilePath = Path.Combine(desktopPath, "template.pdf");
+    var filledPdfFilePath = Path.Combine(desktopPath, "filled.pdf");
+
+    //PdfHelper.ShowIfTextWillFitInTextBoxes(
+    //    pdfTemplateFilePath: templateFilePath,
+    //    renderedPdfPath: filledPdfFilePath
+    //    );
+
+    PdfHelper.FillPdfAndOpen(
+        pdfTemplateFilePath: templateFilePath,
+        renderedPdfPath: filledPdfFilePath
         );
 
     return 0;

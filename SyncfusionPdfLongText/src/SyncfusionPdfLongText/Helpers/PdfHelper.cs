@@ -1,4 +1,6 @@
-﻿using Spectre.Console;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Spectre.Console;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Parsing;
@@ -28,6 +30,19 @@ public static class PdfHelper
 
         DescribeCaliberTextBoxFields(pdfDocument);
         AnsiConsole.WriteLine();
+    }
+
+    public static void FillPdfAndOpen(string pdfTemplateFilePath, string renderedPdfPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(pdfTemplateFilePath);
+        FileHelper.ThrowIfNotExists(pdfTemplateFilePath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(renderedPdfPath);
+
+
+        DisplayHeader("Filling the two problematic Caliber fields -AND- opening the filled PDF");
+        AnsiConsole.WriteLine();
+
+        OpenInDefaultViewer(pdfFilePath: pdfTemplateFilePath);
     }
 
 
@@ -121,6 +136,38 @@ public static class PdfHelper
         else
         {
             AnsiConsole.MarkupLineInterpolated($"[red]*** Syncfusion.Pdf reports that the string '{text}' will NOT fit within the TextBoxField.[/]");
+        }
+    }
+
+    private static void OpenInDefaultViewer(string pdfFilePath)
+    {
+        try
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = pdfFilePath,
+                    UseShellExecute = true,
+                });
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", pdfFilePath);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", pdfFilePath);
+            }
+            else
+            {
+                throw new PlatformNotSupportedException("Unsupported OS platform.");
+            }
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]Failed to open PDF file '{pdfFilePath}' in the system's default PDF viewer.[/]");
+            AnsiConsole.WriteException(ex);
         }
     }
 }

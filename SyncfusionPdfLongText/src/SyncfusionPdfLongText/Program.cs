@@ -8,12 +8,12 @@ try
     var templateFilePath = Path.Combine(desktopPath, "template.pdf");
     var filledPdfFilePath = Path.Combine(desktopPath, "filled.pdf");
 
-    //PdfHelper.ShowIfTextWillFitInTextBoxes(
+    //PdfLayouterHelper.ShowIfTextWillFitInTextBoxes(
     //    pdfTemplateFilePath: templateFilePath,
     //    renderedPdfPath: filledPdfFilePath
     //    );
 
-    PdfHelper.FillPdfAndOpen(
+    PdfFillHelper.FillPdfAndOpen(
         pdfTemplateFilePath: templateFilePath,
         renderedPdfPath: filledPdfFilePath
         );

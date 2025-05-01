@@ -26,20 +26,29 @@ public static class PdfFillHelper
         {
             pdfDocument = new PdfLoadedDocument(file: pdfTemplateStream);
 
+            AnsiConsole.WriteLine("Filling the two caliber fields with long strings...");
             FillTop2CaliberFields(pdfDocument, longCaliber1: Constants.LongCaliber1, longCaliber2: Constants.LongCaliber2);
+            AnsiConsole.WriteLine("Done.");
+            AnsiConsole.WriteLine();
 
             // Flatten the form fields so that they can no longer be filled.
             pdfDocument.Form.Flatten = true;
 
             // Save the filled form field to a file stream.
+            AnsiConsole.MarkupLineInterpolated($"Saving the filled PDF to [blue]'{renderedPdfPath}'[/]...");
             using (var filledFileStream = File.OpenWrite(renderedPdfPath))
             {
                 pdfDocument.Save(filledFileStream);
                 pdfDocument.Close();
             }
+            AnsiConsole.WriteLine("Done.");
+            AnsiConsole.WriteLine();
         }
 
+        AnsiConsole.WriteLine("Opening the filled PDF in the OS's default PDF viewer...");
         OpenInDefaultViewer(pdfFilePath: renderedPdfPath);
+        AnsiConsole.WriteLine("Done.");
+        AnsiConsole.WriteLine();
     }
 
 

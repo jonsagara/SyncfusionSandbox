@@ -1,6 +1,6 @@
 # Syncfusion.Pdf.Net.Core 29.1.40 is not properly auto-resizing text
 
-There are two "Caliber or Gauge" text boxes in a the PDF that I need to fill out:
+There are two "Caliber or Gauge" text boxes in a PDF that I need to fill out:
 
 ![Screenshot of government form with the two Caliber or Gauge fields highlighted in red](./docs/images/TopOfPDF.png)
 

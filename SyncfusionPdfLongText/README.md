@@ -1,5 +1,13 @@
 # Syncfusion.Pdf.Net.Core 29.1.40 is not properly auto-resizing text
 
+## **Update 2025-05-07**
+
+Syncfusion has confirmed that this is a bug, and will soon release a fix:
+
+> We confirmed the issue " Text Preservation Issue Occurs When Flattening PdfLoadedTextBoxField with AutoResizeText Enabled " as a defect in our product and we will include the fix into our upcoming weekly NuGet release, which will be available on (20/05/2025)
+
+## Original README
+
 There are two "Caliber or Gauge" text boxes in a PDF that I need to fill out:
 
 ![Screenshot of government form with the two Caliber or Gauge fields highlighted in red](./docs/images/TopOfPDF.png)

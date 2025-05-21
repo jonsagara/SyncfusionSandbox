@@ -1,5 +1,9 @@
 # Syncfusion.Pdf.Net.Core 29.1.40 is not properly auto-resizing text
 
+## **Update 2025-05-21**
+
+Syncfusion has released a fix in version 29.2.5. Thank you, Syncfusion!
+
 ## **Update 2025-05-07**
 
 Syncfusion has confirmed that this is a bug, and will soon release a fix:
